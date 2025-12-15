@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Git & GitHub - Guide Complet</title>
+    <title>Git & GitHub - Guide Complet & Métriques</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -21,6 +22,7 @@
             --text-secondary: #a0aec0;
             --success: #10b981;
             --warning: #f59e0b;
+            --danger: #ef4444;
         }
 
         body {
@@ -91,9 +93,14 @@
             background: rgba(0, 217, 255, 0.1);
         }
 
-        /* Espace pour la navbar fixe */
         .header-spacer {
             height: 80px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
         }
 
         header {
@@ -101,12 +108,6 @@
             border-bottom: 1px solid rgba(0, 217, 255, 0.1);
             padding: 2rem 0;
             position: relative;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
         }
 
         header h1 {
@@ -118,6 +119,134 @@
             background-clip: text;
         }
 
+        /* Dashboard Métriques */
+        .metrics-dashboard {
+            margin: 2rem 0;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 217, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .metric-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.1);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin: 0.5rem 0;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .metric-progress {
+            height: 6px;
+            background: rgba(0, 217, 255, 0.1);
+            border-radius: 3px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+
+        .metric-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+            border-radius: 3px;
+            transition: width 1s ease;
+        }
+
+        /* Charts Container */
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 217, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+
+        .chart-title {
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Test Commands Section */
+        .test-section {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 217, 255, 0.1);
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 3rem 0;
+        }
+
+        .test-title {
+            color: var(--accent);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .test-command {
+            background: var(--bg-dark);
+            border-left: 3px solid var(--accent);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .test-result {
+            padding: 1rem;
+            background: rgba(0, 217, 255, 0.05);
+            border-radius: 5px;
+            margin: 1rem 0;
+            border-left: 3px solid var(--success);
+        }
+
+        .test-btn {
+            background: var(--accent);
+            color: var(--bg-dark);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 0.5rem 0;
+        }
+
+        .test-btn:hover {
+            background: var(--accent-secondary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Command Cards */
         .search-bar {
             display: flex;
             gap: 1rem;
@@ -171,7 +300,7 @@
 
         .category {
             margin-bottom: 3rem;
-            scroll-margin-top: 100px; /* Pour le scroll vers la section */
+            scroll-margin-top: 100px;
         }
 
         .category-title {
@@ -180,9 +309,6 @@
             margin-bottom: 1.5rem;
             padding-bottom: 1rem;
             border-bottom: 2px solid rgba(0, 217, 255, 0.2);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
         .commands-grid {
@@ -277,22 +403,6 @@
             margin-top: 4rem;
         }
 
-        .stat-box {
-            display: inline-block;
-            margin: 1rem;
-            padding: 0.5rem 1.5rem;
-            background: rgba(0, 217, 255, 0.1);
-            border-radius: 6px;
-            border: 1px solid rgba(0, 217, 255, 0.2);
-        }
-
-        .stat-number {
-            color: var(--accent);
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        /* Bouton retour en haut */
         .back-to-top {
             position: fixed;
             bottom: 30px;
@@ -326,6 +436,30 @@
             transform: scale(1.1);
         }
 
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+            z-index: 1001;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
         @media (max-width: 768px) {
             .navbar {
                 padding: 0.5rem 1rem;
@@ -355,6 +489,10 @@
                 font-size: 1.8rem;
             }
 
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+
             .commands-grid {
                 grid-template-columns: 1fr;
             }
@@ -371,345 +509,587 @@
                 width: 100%;
             }
         }
-
-        @media (max-width: 480px) {
-            .header-spacer {
-                height: 150px;
-            }
-            
-            .nav-links {
-                flex-direction: column;
-                align-items: center;
-                gap: 0.5rem;
-            }
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--success);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 6px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            animation: slideIn 0.3s ease-out;
-            z-index: 1001;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
     </style>
 </head>
 <body>
     <!-- Barre de Navigation Fixe -->
     <nav class="navbar">
         <div class="navbar-content">
-            <a href="#" class="nav-logo">Git Guide</a>
+            <a href="#" class="nav-logo">Git Metrics</a>
             <div class="nav-links">
+                <a href="#metrics" class="nav-link" data-section="metrics">📊 Métriques</a>
                 <a href="#basics" class="nav-link" data-section="basics">Bases</a>
                 <a href="#branches" class="nav-link" data-section="branches">Branches</a>
                 <a href="#github" class="nav-link" data-section="github">GitHub</a>
                 <a href="#advanced" class="nav-link" data-section="advanced">Avancé</a>
-                <a href="#stats" class="nav-link" data-section="stats">Statistiques</a>
+                <a href="#tests" class="nav-link" data-section="tests">🧪 Tests</a>
             </div>
         </div>
     </nav>
 
-    <!-- Espace pour éviter que le contenu soit caché sous la navbar -->
     <div class="header-spacer"></div>
 
     <header>
         <div class="container">
-            <h1>Git & GitHub Guide</h1>
-            <p style="color: var(--text-secondary); margin-top: 0.5rem;">Toutes les commandes essentielles pour maîtriser Git et GitHub</p>
-            
-            <div class="search-bar" style="margin-top: 1.5rem;">
-                <input type="text" id="searchInput" class="search-input" placeholder="Rechercher une commande...">
-                <div class="filter-buttons">
-                    <button class="filter-btn active" data-filter="all">Toutes</button>
-                    <button class="filter-btn" data-filter="basics">Bases</button>
-                    <button class="filter-btn" data-filter="branches">Branches</button>
-                    <button class="filter-btn" data-filter="github">GitHub</button>
-                    <button class="filter-btn" data-filter="advanced">Avancé</button>
-                </div>
-            </div>
-
-            <div style="margin-top: 1.5rem;" id="stats">
-                <span class="stat-box"><span class="stat-number" id="totalCommands">0</span> commandes</span>
-                <span class="stat-box"><span class="stat-number" id="visibleCommands">0</span> affichées</span>
-            </div>
+            <h1>Git & GitHub - Guide & Métriques</h1>
+            <p style="color: var(--text-secondary); margin-top: 0.5rem;">Guide complet avec dashboard de métriques et tests</p>
         </div>
     </header>
 
-    <main class="container content" id="content"></main>
+    <!-- Dashboard de Métriques -->
+    <section class="container metrics-dashboard" id="metrics">
+        <h2 class="category-title">📊 Dashboard de Métriques Git</h2>
+        
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">Commandes Maîtrisées</div>
+                <div class="metric-value" id="masteredCommands">0%</div>
+                <div class="metric-progress">
+                    <div class="metric-progress-bar" id="masteredProgress" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-label">Complexité Moyenne</div>
+                <div class="metric-value" id="avgComplexity">2.5/5</div>
+                <div class="metric-progress">
+                    <div class="metric-progress-bar" id="complexityProgress" style="width: 50%"></div>
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-label">Utilisation GitHub</div>
+                <div class="metric-value" id="githubUsage">35%</div>
+                <div class="metric-progress">
+                    <div class="metric-progress-bar" id="githubProgress" style="width: 35%"></div>
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-label">Score d'Efficacité</div>
+                <div class="metric-value" id="efficiencyScore">78%</div>
+                <div class="metric-progress">
+                    <div class="metric-progress-bar" id="efficiencyProgress" style="width: 78%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-container">
+            <div class="chart-card">
+                <div class="chart-title">📈 Distribution des Commandes</div>
+                <canvas id="commandsChart"></canvas>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-title">⏱️ Fréquence d'Utilisation</div>
+                <canvas id="usageChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section de Test -->
+    <section class="container test-section" id="tests">
+        <h2 class="test-title">🧪 Testez vos Connaissances Git</h2>
+        
+        <div class="test-command">
+            <strong>Test 1 : Initialisation d'un dépôt</strong><br>
+            Quelle commande utiliser pour créer un nouveau dépôt Git ?
+        </div>
+        
+        <div class="test-buttons">
+            <button class="test-btn" onclick="checkTest(1, 'git init')">git init</button>
+            <button class="test-btn" onclick="checkTest(1, 'git create')">git create</button>
+            <button class="test-btn" onclick="checkTest(1, 'git new')">git new</button>
+        </div>
+        
+        <div id="testResult1" class="test-result" style="display: none;"></div>
+
+        <div class="test-command" style="margin-top: 2rem;">
+            <strong>Test 2 : Vérifier l'état du dépôt</strong><br>
+            Quelle commande montre les fichiers modifiés et stagés ?
+        </div>
+        
+        <div class="test-buttons">
+            <button class="test-btn" onclick="checkTest(2, 'git status')">git status</button>
+            <button class="test-btn" onclick="checkTest(2, 'git check')">git check</button>
+            <button class="test-btn" onclick="checkTest(2, 'git show')">git show</button>
+        </div>
+        
+        <div id="testResult2" class="test-result" style="display: none;"></div>
+
+        <div class="test-command" style="margin-top: 2rem;">
+            <strong>Test 3 : Historique des commits</strong><br>
+            Comment voir l'historique en une ligne par commit ?
+        </div>
+        
+        <div class="test-buttons">
+            <button class="test-btn" onclick="checkTest(3, 'git log --oneline')">git log --oneline</button>
+            <button class="test-btn" onclick="checkTest(3, 'git history')">git history</button>
+            <button class="test-btn" onclick="checkTest(3, 'git log -short')">git log -short</button>
+        </div>
+        
+        <div id="testResult3" class="test-result" style="display: none;"></div>
+
+        <div class="test-result" id="testSummary" style="display: none; margin-top: 2rem;">
+            <h3>📋 Résumé des Tests</h3>
+            <p>Score : <span id="testScore">0</span>/3</p>
+            <div class="metric-progress">
+                <div class="metric-progress-bar" id="testProgress" style="width: 0%"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contenu Principal des Commandes -->
+    <div class="container content" id="content">
+        <!-- Les commandes seront insérées ici par JavaScript -->
+    </div>
 
     <footer>
-        <p>&copy; 2025 Git & GitHub Guide | Créé avec ❤️ pour les développeurs</p>
-        <p style="font-size: 0.9rem; margin-top: 1rem;">Cliquez sur une commande pour la copier</p>
+        <p>&copy; 2025 Git & GitHub Guide | Dashboard Métriques | Tests Interactifs</p>
+        <p style="font-size: 0.9rem; margin-top: 1rem;">Score d'efficacité : <span id="footerScore">78%</span> | Commandes testées : <span id="footerTests">0</span>/3</p>
     </footer>
 
-    <!-- Bouton retour en haut -->
     <button class="back-to-top" id="backToTop" title="Retour en haut">↑</button>
 
     <script>
+        // Données des commandes
         const commands = {
             basics: [
                 {
                     name: 'Initialiser un repo',
                     syntax: 'git init',
-                    description: 'Crée un nouveau repository Git local'
+                    description: 'Crée un nouveau repository Git local',
+                    difficulty: 1,
+                    usage: 95
                 },
                 {
                     name: 'Cloner un repo',
                     syntax: 'git clone <url>',
-                    description: 'Télécharge une copie complète du projet'
+                    description: 'Télécharge une copie complète du projet',
+                    difficulty: 1,
+                    usage: 90
                 },
                 {
                     name: 'Configurer l\'utilisateur',
                     syntax: 'git config --global user.name "Votre Nom"\ngit config --global user.email "votre@email.com"',
-                    description: 'Configure votre identité Git globalement'
+                    description: 'Configure votre identité Git globalement',
+                    difficulty: 1,
+                    usage: 85
                 },
                 {
                     name: 'Vérifier le statut',
                     syntax: 'git status',
-                    description: 'Affiche l\'état actuel du repository'
+                    description: 'Affiche l\'état actuel du repository',
+                    difficulty: 1,
+                    usage: 98
                 },
                 {
                     name: 'Ajouter des fichiers',
                     syntax: 'git add <fichier>\ngit add .',
-                    description: 'Ajoute les fichiers au staging area'
+                    description: 'Ajoute les fichiers au staging area',
+                    difficulty: 1,
+                    usage: 96
                 },
                 {
                     name: 'Créer un commit',
                     syntax: 'git commit -m "Message du commit"',
-                    description: 'Enregistre les changements avec un message'
+                    description: 'Enregistre les changements avec un message',
+                    difficulty: 1,
+                    usage: 97
                 },
                 {
                     name: 'Voir l\'historique',
                     syntax: 'git log',
-                    description: 'Affiche l\'historique complet des commits'
+                    description: 'Affiche l\'historique complet des commits',
+                    difficulty: 1,
+                    usage: 92
                 },
                 {
                     name: 'Logs formatés',
                     syntax: 'git log --oneline\ngit log --graph --all --oneline',
-                    description: 'Affiche l\'historique de manière plus lisible'
+                    description: 'Affiche l\'historique de manière plus lisible',
+                    difficulty: 2,
+                    usage: 88
                 },
                 {
                     name: 'Voir les modifications',
                     syntax: 'git diff',
-                    description: 'Montre les changements non stagés'
+                    description: 'Montre les changements non stagés',
+                    difficulty: 2,
+                    usage: 85
                 },
                 {
                     name: 'Diff des fichiers stagés',
                     syntax: 'git diff --staged',
-                    description: 'Montre les changements en staging area'
+                    description: 'Montre les changements en staging area',
+                    difficulty: 2,
+                    usage: 80
                 }
             ],
             branches: [
                 {
                     name: 'Lister les branches',
                     syntax: 'git branch\ngit branch -a',
-                    description: 'Affiche les branches locales ou toutes les branches'
+                    description: 'Affiche les branches locales ou toutes les branches',
+                    difficulty: 1,
+                    usage: 88
                 },
                 {
                     name: 'Créer une branche',
                     syntax: 'git branch <nom-branche>',
-                    description: 'Crée une nouvelle branche'
+                    description: 'Crée une nouvelle branche',
+                    difficulty: 1,
+                    usage: 85
                 },
                 {
                     name: 'Créer et passer à une branche',
                     syntax: 'git checkout -b <nom-branche>\ngit switch -c <nom-branche>',
-                    description: 'Crée une branche et bascule vers elle'
+                    description: 'Crée une branche et bascule vers elle',
+                    difficulty: 2,
+                    usage: 90
                 },
                 {
                     name: 'Changer de branche',
                     syntax: 'git checkout <nom-branche>\ngit switch <nom-branche>',
-                    description: 'Bascule vers une autre branche'
+                    description: 'Bascule vers une autre branche',
+                    difficulty: 1,
+                    usage: 92
                 },
                 {
                     name: 'Supprimer une branche',
                     syntax: 'git branch -d <nom-branche>',
-                    description: 'Supprime une branche (local)'
-                },
-                {
-                    name: 'Supprimer une branche force',
-                    syntax: 'git branch -D <nom-branche>',
-                    description: 'Force la suppression d\'une branche'
+                    description: 'Supprime une branche (local)',
+                    difficulty: 2,
+                    usage: 75
                 },
                 {
                     name: 'Fusionner une branche',
                     syntax: 'git merge <nom-branche>',
-                    description: 'Fusionne une branche à la branche actuelle'
+                    description: 'Fusionne une branche à la branche actuelle',
+                    difficulty: 3,
+                    usage: 82
                 },
                 {
                     name: 'Rebase une branche',
                     syntax: 'git rebase <nom-branche>',
-                    description: 'Réapplique les commits sur une autre base'
+                    description: 'Réapplique les commits sur une autre base',
+                    difficulty: 4,
+                    usage: 70
                 },
                 {
                     name: 'Renommer une branche',
                     syntax: 'git branch -m <ancien-nom> <nouveau-nom>',
-                    description: 'Renomme une branche'
+                    description: 'Renomme une branche',
+                    difficulty: 2,
+                    usage: 65
                 }
             ],
             github: [
                 {
                     name: 'Ajouter un remote',
                     syntax: 'git remote add origin <url>',
-                    description: 'Ajoute un dépôt distant'
+                    description: 'Ajoute un dépôt distant',
+                    difficulty: 2,
+                    usage: 85
                 },
                 {
                     name: 'Lister les remotes',
                     syntax: 'git remote -v',
-                    description: 'Affiche tous les dépôts distants'
+                    description: 'Affiche tous les dépôts distants',
+                    difficulty: 1,
+                    usage: 80
                 },
                 {
                     name: 'Pousser les changements',
                     syntax: 'git push origin <branche>',
-                    description: 'Envoie les commits vers GitHub'
+                    description: 'Envoie les commits vers GitHub',
+                    difficulty: 1,
+                    usage: 95
                 },
                 {
                     name: 'Pousser vers une nouvelle branche',
                     syntax: 'git push -u origin <branche>',
-                    description: 'Pousse et défini le tracking distant'
-                },
-                {
-                    name: 'Pousser toutes les branches',
-                    syntax: 'git push origin --all',
-                    description: 'Pousse toutes les branches'
+                    description: 'Pousse et défini le tracking distant',
+                    difficulty: 2,
+                    usage: 85
                 },
                 {
                     name: 'Tirer les changements',
                     syntax: 'git pull origin <branche>',
-                    description: 'Récupère et fusionne les changements distants'
+                    description: 'Récupère et fusionne les changements distants',
+                    difficulty: 1,
+                    usage: 90
                 },
                 {
                     name: 'Récupérer les changements',
                     syntax: 'git fetch origin',
-                    description: 'Récupère les changements sans fusionner'
+                    description: 'Récupère les changements sans fusionner',
+                    difficulty: 2,
+                    usage: 75
                 },
                 {
                     name: 'Créer une Pull Request',
                     syntax: 'git push origin <branche>\n# Ensuite via GitHub UI',
-                    description: 'Prépare et crée une PR sur GitHub'
-                },
-                {
-                    name: 'Synchroniser avec upstream',
-                    syntax: 'git fetch upstream\ngit merge upstream/main',
-                    description: 'Met à jour avec le repo principal'
-                },
-                {
-                    name: 'Ajouter un upstream',
-                    syntax: 'git remote add upstream <url-original>',
-                    description: 'Ajoute le repo source comme remote'
+                    description: 'Prépare et crée une PR sur GitHub',
+                    difficulty: 3,
+                    usage: 80
                 }
             ],
             advanced: [
                 {
                     name: 'Stash les modifications',
                     syntax: 'git stash\ngit stash save "description"',
-                    description: 'Sauvegarde temporaire des changements'
+                    description: 'Sauvegarde temporaire des changements',
+                    difficulty: 3,
+                    usage: 70
                 },
                 {
                     name: 'Récupérer les stash',
                     syntax: 'git stash pop\ngit stash apply',
-                    description: 'Restaure un stash (pop le supprime)'
-                },
-                {
-                    name: 'Lister les stash',
-                    syntax: 'git stash list',
-                    description: 'Affiche tous les stash'
+                    description: 'Restaure un stash (pop le supprime)',
+                    difficulty: 3,
+                    usage: 65
                 },
                 {
                     name: 'Annuler le dernier commit',
                     syntax: 'git reset HEAD~1',
-                    description: 'Annule le dernier commit (garde les changements)'
-                },
-                {
-                    name: 'Réinitialiser hard',
-                    syntax: 'git reset --hard HEAD~1',
-                    description: 'Annule le dernier commit ET les changements'
+                    description: 'Annule le dernier commit (garde les changements)',
+                    difficulty: 4,
+                    usage: 60
                 },
                 {
                     name: 'Modifier le dernier commit',
                     syntax: 'git commit --amend\ngit commit --amend --no-edit',
-                    description: 'Modifie le dernier commit'
+                    description: 'Modifie le dernier commit',
+                    difficulty: 3,
+                    usage: 55
                 },
                 {
                     name: 'Cherry-pick un commit',
                     syntax: 'git cherry-pick <hash-commit>',
-                    description: 'Applique un commit spécifique'
+                    description: 'Applique un commit spécifique',
+                    difficulty: 4,
+                    usage: 50
                 },
                 {
                     name: 'Rebaser interactif',
                     syntax: 'git rebase -i HEAD~3',
-                    description: 'Permet d\'éditer les derniers commits'
+                    description: 'Permet d\'éditer les derniers commits',
+                    difficulty: 5,
+                    usage: 40
                 },
                 {
                     name: 'Créer un tag',
                     syntax: 'git tag v1.0.0\ngit tag -a v1.0.0 -m "Message"',
-                    description: 'Crée une version/tag du code'
-                },
-                {
-                    name: 'Pousser les tags',
-                    syntax: 'git push origin --tags',
-                    description: 'Envoie tous les tags à GitHub'
+                    description: 'Crée une version/tag du code',
+                    difficulty: 2,
+                    usage: 60
                 },
                 {
                     name: 'Bisect pour debugger',
                     syntax: 'git bisect start\ngit bisect bad\ngit bisect good v1.0',
-                    description: 'Trouve le commit qui a introduit un bug'
-                },
-                {
-                    name: 'Blame un fichier',
-                    syntax: 'git blame <fichier>',
-                    description: 'Montre qui a modifié chaque ligne'
-                },
-                {
-                    name: 'Nettoyer les branches',
-                    syntax: 'git branch -vv | grep gone | awk \'{print $1}\' | xargs git branch -d',
-                    description: 'Supprime les branches distantes supprimées'
+                    description: 'Trouve le commit qui a introduit un bug',
+                    difficulty: 5,
+                    usage: 30
                 }
             ]
         };
 
+        // Variables globales
         let currentFilter = 'all';
-        let filteredCommands = [];
+        let testResults = { 1: false, 2: false, 3: false };
 
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCommands();
+            initMetrics();
+            initCharts();
+            initNavigation();
+            initScrollToTop();
+        });
+
+        // Fonction pour calculer les métriques
+        function calculateMetrics() {
+            let totalCommands = 0;
+            let totalDifficulty = 0;
+            let githubCommands = 0;
+            let masteredCommands = 0;
+            
+            Object.values(commands).forEach(category => {
+                totalCommands += category.length;
+                category.forEach(cmd => {
+                    totalDifficulty += cmd.difficulty;
+                    if (cmd.usage > 80) masteredCommands++;
+                });
+            });
+            
+            githubCommands = commands.github.length;
+            
+            const avgComplexity = (totalDifficulty / totalCommands).toFixed(1);
+            const masteredPercent = Math.round((masteredCommands / totalCommands) * 100);
+            const githubPercent = Math.round((githubCommands / totalCommands) * 100);
+            
+            // Mise à jour des métriques
+            document.getElementById('masteredCommands').textContent = masteredPercent + '%';
+            document.getElementById('avgComplexity').textContent = avgComplexity + '/5';
+            document.getElementById('githubUsage').textContent = githubPercent + '%';
+            
+            // Mise à jour des progress bars
+            document.getElementById('masteredProgress').style.width = masteredPercent + '%';
+            document.getElementById('complexityProgress').style.width = (avgComplexity / 5 * 100) + '%';
+            document.getElementById('githubProgress').style.width = githubPercent + '%';
+            
+            // Calcul du score d'efficacité
+            const efficiencyScore = Math.round((masteredPercent + (100 - (avgComplexity * 20)) + githubPercent) / 3);
+            document.getElementById('efficiencyScore').textContent = efficiencyScore + '%';
+            document.getElementById('efficiencyProgress').style.width = efficiencyScore + '%';
+            document.getElementById('footerScore').textContent = efficiencyScore + '%';
+        }
+
+        // Initialisation des graphiques
+        function initCharts() {
+            // Chart 1: Distribution des commandes
+            const ctx1 = document.getElementById('commandsChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Bases', 'Branches', 'GitHub', 'Avancé'],
+                    datasets: [{
+                        data: [
+                            commands.basics.length,
+                            commands.branches.length,
+                            commands.github.length,
+                            commands.advanced.length
+                        ],
+                        backgroundColor: [
+                            '#00d9ff',
+                            '#7c3aed',
+                            '#10b981',
+                            '#f59e0b'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#0a0e27'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#a0aec0',
+                                padding: 20
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Fréquence d'utilisation
+            const ctx2 = document.getElementById('usageChart').getContext('2d');
+            
+            // Préparer les données
+            const allCommands = [];
+            Object.values(commands).forEach(category => {
+                allCommands.push(...category);
+            });
+            
+            // Trier par utilisation
+            allCommands.sort((a, b) => b.usage - a.usage);
+            const topCommands = allCommands.slice(0, 8);
+            
+            new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: topCommands.map(cmd => cmd.name.split(' ')[0]),
+                    datasets: [{
+                        label: 'Fréquence d\'utilisation (%)',
+                        data: topCommands.map(cmd => cmd.usage),
+                        backgroundColor: 'rgba(0, 217, 255, 0.6)',
+                        borderColor: '#00d9ff',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#a0aec0'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#a0aec0',
+                                maxRotation: 45
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#a0aec0'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Tests interactifs
+        function checkTest(testNumber, answer) {
+            const correctAnswers = {
+                1: 'git init',
+                2: 'git status',
+                3: 'git log --oneline'
+            };
+            
+            const resultDiv = document.getElementById('testResult' + testNumber);
+            const isCorrect = answer === correctAnswers[testNumber];
+            
+            testResults[testNumber] = isCorrect;
+            
+            resultDiv.style.display = 'block';
+            resultDiv.style.borderLeftColor = isCorrect ? '#10b981' : '#ef4444';
+            resultDiv.innerHTML = isCorrect 
+                ? '✅ Correct ! ' + answer + ' est la bonne réponse.'
+                : '❌ Incorrect. La bonne réponse est : ' + correctAnswers[testNumber];
+            
+            updateTestSummary();
+        }
+
+        function updateTestSummary() {
+            const correctCount = Object.values(testResults).filter(v => v).length;
+            const totalTests = Object.keys(testResults).length;
+            const score = Math.round((correctCount / totalTests) * 100);
+            
+            document.getElementById('testScore').textContent = correctCount;
+            document.getElementById('testProgress').style.width = score + '%';
+            document.getElementById('footerTests').textContent = correctCount;
+            
+            const summaryDiv = document.getElementById('testSummary');
+            summaryDiv.style.display = 'block';
+        }
+
+        // Fonctions existantes (légèrement modifiées)
         function renderCommands() {
             const content = document.getElementById('content');
             content.innerHTML = '';
 
-            let totalCount = 0;
-            let visibleCount = 0;
-
-            const categories = currentFilter === 'all' ? Object.keys(commands) : [currentFilter];
-
-            categories.forEach(category => {
-                const categoryCommands = commands[category];
-                totalCount += categoryCommands.length;
-
-                const filtered = categoryCommands.filter(cmd => {
-                    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-                    return cmd.name.toLowerCase().includes(searchTerm) || 
-                           cmd.description.toLowerCase().includes(searchTerm);
-                });
-
-                visibleCount += filtered.length;
-
-                if (filtered.length > 0) {
+            Object.keys(commands).forEach(category => {
+                if (currentFilter === 'all' || currentFilter === category) {
                     const categoryDiv = document.createElement('div');
                     categoryDiv.className = 'category';
-                    categoryDiv.id = category; // ID pour le scroll
+                    categoryDiv.id = category;
 
                     const title = document.createElement('h2');
                     title.className = 'category-title';
@@ -719,7 +1099,7 @@
                     const grid = document.createElement('div');
                     grid.className = 'commands-grid';
 
-                    filtered.forEach(cmd => {
+                    commands[category].forEach(cmd => {
                         const card = document.createElement('div');
                         card.className = 'command-card';
                         card.onclick = () => copyToClipboard(cmd.syntax);
@@ -730,7 +1110,11 @@
                             </div>
                             <div class="command-syntax">${cmd.syntax.replace(/\n/g, '<br>')}</div>
                             <p class="command-description">${cmd.description}</p>
-                            <span class="command-badge">${getCategoryLabel(category)}</span>
+                            <div style="display: flex; justify-content: space-between; margin-top: 1rem;">
+                                <span class="command-badge">${getCategoryLabel(category)}</span>
+                                <span class="command-badge">Difficulté: ${'★'.repeat(cmd.difficulty)}${'☆'.repeat(5-cmd.difficulty)}</span>
+                                <span class="command-badge">Usage: ${cmd.usage}%</span>
+                            </div>
                         `;
                         grid.appendChild(card);
                     });
@@ -740,18 +1124,7 @@
                 }
             });
 
-            if (visibleCount === 0) {
-                const noResults = document.createElement('div');
-                noResults.className = 'no-results';
-                noResults.textContent = 'Aucune commande trouvée';
-                content.appendChild(noResults);
-            }
-
-            document.getElementById('totalCommands').textContent = totalCount;
-            document.getElementById('visibleCommands').textContent = visibleCount;
-            
-            // Mettre à jour la navigation active
-            updateActiveNav();
+            calculateMetrics();
         }
 
         function getCategoryTitle(category) {
@@ -778,53 +1151,25 @@
             navigator.clipboard.writeText(text).then(() => {
                 const toast = document.createElement('div');
                 toast.className = 'toast';
-                toast.textContent = '✓ Copié dans le presse-papiers!';
+                toast.textContent = '✓ Commande copiée !';
                 document.body.appendChild(toast);
                 setTimeout(() => toast.remove(), 2000);
             });
         }
 
-        // Navigation active
-        function updateActiveNav() {
-            const sections = document.querySelectorAll('.category');
-            const navLinks = document.querySelectorAll('.nav-link');
-            
-            let activeSection = 'basics';
-            let minDistance = Infinity;
-            
-            sections.forEach(section => {
-                const rect = section.getBoundingClientRect();
-                const distance = Math.abs(rect.top - 100); // 100px du haut (pour la navbar)
-                
-                if (distance < minDistance && rect.top <= 300) {
-                    minDistance = distance;
-                    activeSection = section.id;
-                }
-            });
-            
-            navLinks.forEach(link => {
-                if (link.dataset.section === activeSection) {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
-                }
-            });
+        function initMetrics() {
+            calculateMetrics();
         }
 
-        // Navigation par clic
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const targetId = this.dataset.section;
-                
-                if (targetId === 'stats') {
-                    // Scroll vers les statistiques
-                    document.getElementById('stats').scrollIntoView({ behavior: 'smooth' });
-                } else {
-                    // Scroll vers la section
+        function initNavigation() {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.dataset.section;
                     const targetElement = document.getElementById(targetId);
+                    
                     if (targetElement) {
-                        const offset = 80; // Hauteur de la navbar
+                        const offset = 80;
                         const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - offset;
                         
                         window.scrollTo({
@@ -832,67 +1177,51 @@
                             behavior: 'smooth'
                         });
                         
-                        // Mettre à jour le filtre actif
-                        if (targetId !== 'stats') {
+                        if (targetId !== 'metrics' && targetId !== 'tests') {
                             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
                             document.querySelector(`.filter-btn[data-filter="${targetId}"]`).classList.add('active');
                             currentFilter = targetId;
                             renderCommands();
                         }
                     }
+                });
+            });
+
+            document.getElementById('searchInput').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                document.querySelectorAll('.command-card').forEach(card => {
+                    const text = card.textContent.toLowerCase();
+                    card.style.display = text.includes(searchTerm) ? 'block' : 'none';
+                });
+            });
+
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.dataset.filter;
+                    renderCommands();
+                });
+            });
+        }
+
+        function initScrollToTop() {
+            window.addEventListener('scroll', function() {
+                const backToTopBtn = document.getElementById('backToTop');
+                if (window.scrollY > 500) {
+                    backToTopBtn.classList.add('visible');
+                } else {
+                    backToTopBtn.classList.remove('visible');
                 }
             });
-        });
 
-        // Scroll spy
-        window.addEventListener('scroll', function() {
-            updateActiveNav();
-            
-            // Afficher/cacher le bouton retour en haut
-            const backToTopBtn = document.getElementById('backToTop');
-            if (window.scrollY > 500) {
-                backToTopBtn.classList.add('visible');
-            } else {
-                backToTopBtn.classList.remove('visible');
-            }
-        });
-
-        // Bouton retour en haut
-        document.getElementById('backToTop').addEventListener('click', function() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
+            document.getElementById('backToTop').addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             });
-        });
-
-        // Recherche et filtres
-        document.getElementById('searchInput').addEventListener('input', renderCommands);
-
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentFilter = btn.dataset.filter;
-                renderCommands();
-                
-                // Scroll vers la première section visible
-                setTimeout(() => {
-                    const firstSection = document.querySelector('.category:not(.hidden)');
-                    if (firstSection && currentFilter !== 'all') {
-                        const offset = 80;
-                        const targetPosition = firstSection.getBoundingClientRect().top + window.pageYOffset - offset;
-                        
-                        window.scrollTo({
-                            top: targetPosition,
-                            behavior: 'smooth'
-                        });
-                    }
-                }, 100);
-            });
-        });
-
-        // Initialisation
-        renderCommands();
+        }
     </script>
 </body>
 </html>
