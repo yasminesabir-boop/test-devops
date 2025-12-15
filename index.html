@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git & GitHub - Guide Complet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0e27;
+            --bg-card: #1a1f3a;
+            --bg-hover: #252e4a;
+            --accent: #00d9ff;
+            --accent-secondary: #7c3aed;
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Barre de Navigation Fixe */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+            z-index: 1000;
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            border: 1px solid transparent;
+        }
+
+        .nav-link:hover {
+            color: var(--accent);
+            border-color: rgba(0, 217, 255, 0.2);
+            background: rgba(0, 217, 255, 0.05);
+        }
+
+        .nav-link.active {
+            color: var(--accent);
+            border-color: var(--accent);
+            background: rgba(0, 217, 255, 0.1);
+        }
+
+        /* Espace pour la navbar fixe */
+        .header-spacer {
+            height: 80px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(124, 58, 237, 0.1) 100%);
+            border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+            padding: 2rem 0;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-dark);
+            border: 2px solid rgba(0, 217, 255, 0.2);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 2px solid rgba(0, 217, 255, 0.2);
+            color: var(--text-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--accent-secondary);
+            border-color: var(--accent);
+            color: var(--text-primary);
+        }
+
+        .content {
+            padding: 3rem 0;
+        }
+
+        .category {
+            margin-bottom: 3rem;
+            scroll-margin-top: 100px; /* Pour le scroll vers la section */
+        }
+
+        .category-title {
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(0, 217, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .commands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .command-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 217, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .command-card:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent);
+            box-shadow: 0 8px 32px rgba(0, 217, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .command-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .copy-btn {
+            background: var(--accent-secondary);
+            border: none;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent);
+            color: var(--bg-dark);
+        }
+
+        .command-syntax {
+            background: var(--bg-dark);
+            border-left: 3px solid var(--accent);
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: var(--accent);
+            margin: 1rem 0;
+            word-break: break-all;
+        }
+
+        .command-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .command-badge {
+            display: inline-block;
+            background: rgba(0, 217, 255, 0.1);
+            color: var(--accent);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        footer {
+            background: var(--bg-card);
+            border-top: 1px solid rgba(0, 217, 255, 0.1);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+            margin-top: 4rem;
+        }
+
+        .stat-box {
+            display: inline-block;
+            margin: 1rem;
+            padding: 0.5rem 1.5rem;
+            background: rgba(0, 217, 255, 0.1);
+            border-radius: 6px;
+            border: 1px solid rgba(0, 217, 255, 0.2);
+        }
+
+        .stat-number {
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* Bouton retour en haut */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--accent);
+            color: var(--bg-dark);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(100px);
+            transition: all 0.3s;
+            z-index: 999;
+            box-shadow: 0 4px 20px rgba(0, 217, 255, 0.3);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .back-to-top:hover {
+            background: var(--accent-secondary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0.5rem 1rem;
+            }
+            
+            .navbar-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .nav-links {
+                gap: 0.5rem;
+                justify-content: center;
+            }
+            
+            .nav-link {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.8rem;
+            }
+            
+            .header-spacer {
+                height: 120px;
+            }
+
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .commands-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-bar {
+                flex-direction: column;
+            }
+
+            .filter-buttons {
+                flex-direction: column;
+            }
+
+            .filter-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-spacer {
+                height: 150px;
+            }
+            
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+            }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+            z-index: 1001;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Barre de Navigation Fixe -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="#" class="nav-logo">Git Guide</a>
+            <div class="nav-links">
+                <a href="#basics" class="nav-link" data-section="basics">Bases</a>
+                <a href="#branches" class="nav-link" data-section="branches">Branches</a>
+                <a href="#github" class="nav-link" data-section="github">GitHub</a>
+                <a href="#advanced" class="nav-link" data-section="advanced">Avancé</a>
+                <a href="#stats" class="nav-link" data-section="stats">Statistiques</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Espace pour éviter que le contenu soit caché sous la navbar -->
+    <div class="header-spacer"></div>
+
+    <header>
+        <div class="container">
+            <h1>Git & GitHub Guide</h1>
+            <p style="color: var(--text-secondary); margin-top: 0.5rem;">Toutes les commandes essentielles pour maîtriser Git et GitHub</p>
+            
+            <div class="search-bar" style="margin-top: 1.5rem;">
+                <input type="text" id="searchInput" class="search-input" placeholder="Rechercher une commande...">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">Toutes</button>
+                    <button class="filter-btn" data-filter="basics">Bases</button>
+                    <button class="filter-btn" data-filter="branches">Branches</button>
+                    <button class="filter-btn" data-filter="github">GitHub</button>
+                    <button class="filter-btn" data-filter="advanced">Avancé</button>
+                </div>
+            </div>
+
+            <div style="margin-top: 1.5rem;" id="stats">
+                <span class="stat-box"><span class="stat-number" id="totalCommands">0</span> commandes</span>
+                <span class="stat-box"><span class="stat-number" id="visibleCommands">0</span> affichées</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container content" id="content"></main>
+
+    <footer>
+        <p>&copy; 2025 Git & GitHub Guide | Créé avec ❤️ pour les développeurs</p>
+        <p style="font-size: 0.9rem; margin-top: 1rem;">Cliquez sur une commande pour la copier</p>
+    </footer>
+
+    <!-- Bouton retour en haut -->
+    <button class="back-to-top" id="backToTop" title="Retour en haut">↑</button>
+
+    <script>
+        const commands = {
+            basics: [
+                {
+                    name: 'Initialiser un repo',
+                    syntax: 'git init',
+                    description: 'Crée un nouveau repository Git local'
+                },
+                {
+                    name: 'Cloner un repo',
+                    syntax: 'git clone <url>',
+                    description: 'Télécharge une copie complète du projet'
+                },
+                {
+                    name: 'Configurer l\'utilisateur',
+                    syntax: 'git config --global user.name "Votre Nom"\ngit config --global user.email "votre@email.com"',
+                    description: 'Configure votre identité Git globalement'
+                },
+                {
+                    name: 'Vérifier le statut',
+                    syntax: 'git status',
+                    description: 'Affiche l\'état actuel du repository'
+                },
+                {
+                    name: 'Ajouter des fichiers',
+                    syntax: 'git add <fichier>\ngit add .',
+                    description: 'Ajoute les fichiers au staging area'
+                },
+                {
+                    name: 'Créer un commit',
+                    syntax: 'git commit -m "Message du commit"',
+                    description: 'Enregistre les changements avec un message'
+                },
+                {
+                    name: 'Voir l\'historique',
+                    syntax: 'git log',
+                    description: 'Affiche l\'historique complet des commits'
+                },
+                {
+                    name: 'Logs formatés',
+                    syntax: 'git log --oneline\ngit log --graph --all --oneline',
+                    description: 'Affiche l\'historique de manière plus lisible'
+                },
+                {
+                    name: 'Voir les modifications',
+                    syntax: 'git diff',
+                    description: 'Montre les changements non stagés'
+                },
+                {
+                    name: 'Diff des fichiers stagés',
+                    syntax: 'git diff --staged',
+                    description: 'Montre les changements en staging area'
+                }
+            ],
+            branches: [
+                {
+                    name: 'Lister les branches',
+                    syntax: 'git branch\ngit branch -a',
+                    description: 'Affiche les branches locales ou toutes les branches'
+                },
+                {
+                    name: 'Créer une branche',
+                    syntax: 'git branch <nom-branche>',
+                    description: 'Crée une nouvelle branche'
+                },
+                {
+                    name: 'Créer et passer à une branche',
+                    syntax: 'git checkout -b <nom-branche>\ngit switch -c <nom-branche>',
+                    description: 'Crée une branche et bascule vers elle'
+                },
+                {
+                    name: 'Changer de branche',
+                    syntax: 'git checkout <nom-branche>\ngit switch <nom-branche>',
+                    description: 'Bascule vers une autre branche'
+                },
+                {
+                    name: 'Supprimer une branche',
+                    syntax: 'git branch -d <nom-branche>',
+                    description: 'Supprime une branche (local)'
+                },
+                {
+                    name: 'Supprimer une branche force',
+                    syntax: 'git branch -D <nom-branche>',
+                    description: 'Force la suppression d\'une branche'
+                },
+                {
+                    name: 'Fusionner une branche',
+                    syntax: 'git merge <nom-branche>',
+                    description: 'Fusionne une branche à la branche actuelle'
+                },
+                {
+                    name: 'Rebase une branche',
+                    syntax: 'git rebase <nom-branche>',
+                    description: 'Réapplique les commits sur une autre base'
+                },
+                {
+                    name: 'Renommer une branche',
+                    syntax: 'git branch -m <ancien-nom> <nouveau-nom>',
+                    description: 'Renomme une branche'
+                }
+            ],
+            github: [
+                {
+                    name: 'Ajouter un remote',
+                    syntax: 'git remote add origin <url>',
+                    description: 'Ajoute un dépôt distant'
+                },
+                {
+                    name: 'Lister les remotes',
+                    syntax: 'git remote -v',
+                    description: 'Affiche tous les dépôts distants'
+                },
+                {
+                    name: 'Pousser les changements',
+                    syntax: 'git push origin <branche>',
+                    description: 'Envoie les commits vers GitHub'
+                },
+                {
+                    name: 'Pousser vers une nouvelle branche',
+                    syntax: 'git push -u origin <branche>',
+                    description: 'Pousse et défini le tracking distant'
+                },
+                {
+                    name: 'Pousser toutes les branches',
+                    syntax: 'git push origin --all',
+                    description: 'Pousse toutes les branches'
+                },
+                {
+                    name: 'Tirer les changements',
+                    syntax: 'git pull origin <branche>',
+                    description: 'Récupère et fusionne les changements distants'
+                },
+                {
+                    name: 'Récupérer les changements',
+                    syntax: 'git fetch origin',
+                    description: 'Récupère les changements sans fusionner'
+                },
+                {
+                    name: 'Créer une Pull Request',
+                    syntax: 'git push origin <branche>\n# Ensuite via GitHub UI',
+                    description: 'Prépare et crée une PR sur GitHub'
+                },
+                {
+                    name: 'Synchroniser avec upstream',
+                    syntax: 'git fetch upstream\ngit merge upstream/main',
+                    description: 'Met à jour avec le repo principal'
+                },
+                {
+                    name: 'Ajouter un upstream',
+                    syntax: 'git remote add upstream <url-original>',
+                    description: 'Ajoute le repo source comme remote'
+                }
+            ],
+            advanced: [
+                {
+                    name: 'Stash les modifications',
+                    syntax: 'git stash\ngit stash save "description"',
+                    description: 'Sauvegarde temporaire des changements'
+                },
+                {
+                    name: 'Récupérer les stash',
+                    syntax: 'git stash pop\ngit stash apply',
+                    description: 'Restaure un stash (pop le supprime)'
+                },
+                {
+                    name: 'Lister les stash',
+                    syntax: 'git stash list',
+                    description: 'Affiche tous les stash'
+                },
+                {
+                    name: 'Annuler le dernier commit',
+                    syntax: 'git reset HEAD~1',
+                    description: 'Annule le dernier commit (garde les changements)'
+                },
+                {
+                    name: 'Réinitialiser hard',
+                    syntax: 'git reset --hard HEAD~1',
+                    description: 'Annule le dernier commit ET les changements'
+                },
+                {
+                    name: 'Modifier le dernier commit',
+                    syntax: 'git commit --amend\ngit commit --amend --no-edit',
+                    description: 'Modifie le dernier commit'
+                },
+                {
+                    name: 'Cherry-pick un commit',
+                    syntax: 'git cherry-pick <hash-commit>',
+                    description: 'Applique un commit spécifique'
+                },
+                {
+                    name: 'Rebaser interactif',
+                    syntax: 'git rebase -i HEAD~3',
+                    description: 'Permet d\'éditer les derniers commits'
+                },
+                {
+                    name: 'Créer un tag',
+                    syntax: 'git tag v1.0.0\ngit tag -a v1.0.0 -m "Message"',
+                    description: 'Crée une version/tag du code'
+                },
+                {
+                    name: 'Pousser les tags',
+                    syntax: 'git push origin --tags',
+                    description: 'Envoie tous les tags à GitHub'
+                },
+                {
+                    name: 'Bisect pour debugger',
+                    syntax: 'git bisect start\ngit bisect bad\ngit bisect good v1.0',
+                    description: 'Trouve le commit qui a introduit un bug'
+                },
+                {
+                    name: 'Blame un fichier',
+                    syntax: 'git blame <fichier>',
+                    description: 'Montre qui a modifié chaque ligne'
+                },
+                {
+                    name: 'Nettoyer les branches',
+                    syntax: 'git branch -vv | grep gone | awk \'{print $1}\' | xargs git branch -d',
+                    description: 'Supprime les branches distantes supprimées'
+                }
+            ]
+        };
+
+        let currentFilter = 'all';
+        let filteredCommands = [];
+
+        function renderCommands() {
+            const content = document.getElementById('content');
+            content.innerHTML = '';
+
+            let totalCount = 0;
+            let visibleCount = 0;
+
+            const categories = currentFilter === 'all' ? Object.keys(commands) : [currentFilter];
+
+            categories.forEach(category => {
+                const categoryCommands = commands[category];
+                totalCount += categoryCommands.length;
+
+                const filtered = categoryCommands.filter(cmd => {
+                    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                    return cmd.name.toLowerCase().includes(searchTerm) || 
+                           cmd.description.toLowerCase().includes(searchTerm);
+                });
+
+                visibleCount += filtered.length;
+
+                if (filtered.length > 0) {
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.className = 'category';
+                    categoryDiv.id = category; // ID pour le scroll
+
+                    const title = document.createElement('h2');
+                    title.className = 'category-title';
+                    title.textContent = getCategoryTitle(category);
+                    categoryDiv.appendChild(title);
+
+                    const grid = document.createElement('div');
+                    grid.className = 'commands-grid';
+
+                    filtered.forEach(cmd => {
+                        const card = document.createElement('div');
+                        card.className = 'command-card';
+                        card.onclick = () => copyToClipboard(cmd.syntax);
+                        card.innerHTML = `
+                            <div class="command-name">
+                                <span>${cmd.name}</span>
+                                <button class="copy-btn" onclick="event.stopPropagation(); copyToClipboard('${cmd.syntax.replace(/'/g, "\\'")}')">Copier</button>
+                            </div>
+                            <div class="command-syntax">${cmd.syntax.replace(/\n/g, '<br>')}</div>
+                            <p class="command-description">${cmd.description}</p>
+                            <span class="command-badge">${getCategoryLabel(category)}</span>
+                        `;
+                        grid.appendChild(card);
+                    });
+
+                    categoryDiv.appendChild(grid);
+                    content.appendChild(categoryDiv);
+                }
+            });
+
+            if (visibleCount === 0) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                noResults.textContent = 'Aucune commande trouvée';
+                content.appendChild(noResults);
+            }
+
+            document.getElementById('totalCommands').textContent = totalCount;
+            document.getElementById('visibleCommands').textContent = visibleCount;
+            
+            // Mettre à jour la navigation active
+            updateActiveNav();
+        }
+
+        function getCategoryTitle(category) {
+            const titles = {
+                basics: 'Commandes de Base',
+                branches: 'Gestion des Branches',
+                github: 'GitHub & Remote',
+                advanced: 'Commandes Avancées'
+            };
+            return titles[category] || category.charAt(0).toUpperCase() + category.slice(1);
+        }
+
+        function getCategoryLabel(category) {
+            const labels = {
+                basics: 'Basique',
+                branches: 'Branche',
+                github: 'GitHub',
+                advanced: 'Avancé'
+            };
+            return labels[category] || category;
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.textContent = '✓ Copié dans le presse-papiers!';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2000);
+            });
+        }
+
+        // Navigation active
+        function updateActiveNav() {
+            const sections = document.querySelectorAll('.category');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            let activeSection = 'basics';
+            let minDistance = Infinity;
+            
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                const distance = Math.abs(rect.top - 100); // 100px du haut (pour la navbar)
+                
+                if (distance < minDistance && rect.top <= 300) {
+                    minDistance = distance;
+                    activeSection = section.id;
+                }
+            });
+            
+            navLinks.forEach(link => {
+                if (link.dataset.section === activeSection) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+
+        // Navigation par clic
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.dataset.section;
+                
+                if (targetId === 'stats') {
+                    // Scroll vers les statistiques
+                    document.getElementById('stats').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    // Scroll vers la section
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offset = 80; // Hauteur de la navbar
+                        const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - offset;
+                        
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Mettre à jour le filtre actif
+                        if (targetId !== 'stats') {
+                            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                            document.querySelector(`.filter-btn[data-filter="${targetId}"]`).classList.add('active');
+                            currentFilter = targetId;
+                            renderCommands();
+                        }
+                    }
+                }
+            });
+        });
+
+        // Scroll spy
+        window.addEventListener('scroll', function() {
+            updateActiveNav();
+            
+            // Afficher/cacher le bouton retour en haut
+            const backToTopBtn = document.getElementById('backToTop');
+            if (window.scrollY > 500) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        });
+
+        // Bouton retour en haut
+        document.getElementById('backToTop').addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Recherche et filtres
+        document.getElementById('searchInput').addEventListener('input', renderCommands);
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                renderCommands();
+                
+                // Scroll vers la première section visible
+                setTimeout(() => {
+                    const firstSection = document.querySelector('.category:not(.hidden)');
+                    if (firstSection && currentFilter !== 'all') {
+                        const offset = 80;
+                        const targetPosition = firstSection.getBoundingClientRect().top + window.pageYOffset - offset;
+                        
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                }, 100);
+            });
+        });
+
+        // Initialisation
+        renderCommands();
+    </script>
+</body>
+</html>
